@@ -37,4 +37,5 @@ yarn-error.*
 
 #python virtual environment
 venv/
-
+#Ignoring database files
+*.db 
