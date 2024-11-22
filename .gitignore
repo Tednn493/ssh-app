@@ -39,3 +39,4 @@ yarn-error.*
 venv/
 #Ignoring database files
 back-end/*.db 
+back-end/__pycache__
