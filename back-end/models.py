@@ -34,9 +34,15 @@ def init_db():
                 product TEXT NOT NULL,
                 price REAL NOT NULL,
                 quantity INTEGER NOT NULL,
+                added_by TEXT,
                 FOREIGN KEY (basket_id) REFERENCES baskets (id) ON DELETE CASCADE
             )
         ''')
 
+        cursor.execute('''
+            PRAGMA table_info(basket_items);
+        ''')
+
         conn.commit()
         print("Database initialized successfully!")
+        

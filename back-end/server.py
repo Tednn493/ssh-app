@@ -16,7 +16,6 @@ DB_FILE = "database.db"
 # Initialize the database when the server starts
 init_db()
 
-
 @app.route('/api/baskets', methods=['POST'])
 def create_basket():
     """Create a new basket and generate a unique basket code."""
@@ -79,37 +78,25 @@ def add_item_to_basket(basket_code):
     product = data.get('product')
     price = data.get('price')
     quantity = data.get('quantity')
+    added_by = data.get('added_by')  
 
     with db_lock:
         with sqlite3.connect(DB_FILE) as conn:
             cursor = conn.cursor()
-            try:
-                cursor.execute('BEGIN IMMEDIATE TRANSACTION')
-                cursor.execute('SELECT id FROM baskets WHERE basket_code = ?', (basket_code,))
-                basket = cursor.fetchone()
+            cursor.execute('SELECT id FROM baskets WHERE basket_code = ?', (basket_code,))
+            basket = cursor.fetchone()
 
-                if not basket:
-                    conn.rollback()
-                    return jsonify({"error": "Basket not found"}), 404
+            if not basket:
+                return jsonify({"error": "Basket not found"}), 404
 
-                basket_id = basket[0]
-                cursor.execute('''
-                    INSERT INTO basket_items (basket_id, product, price, quantity)
-                    VALUES (?, ?, ?, ?)
-                ''', (basket_id, product, price, quantity))
-                conn.commit()
-            except sqlite3.OperationalError:
-                conn.rollback()
-                return jsonify({"error": "Database is busy, try again later"}), 503
+            basket_id = basket[0]
+            cursor.execute('''
+                INSERT INTO basket_items (basket_id, product, price, quantity, added_by)
+                VALUES (?, ?, ?, ?, ?)
+            ''', (basket_id, product, price, quantity, added_by))
+            conn.commit()
+            return jsonify({"message": "Item added successfully"}), 200
 
-    socketio.emit('item_added', {
-        "basket_code": basket_code,
-        "product": product,
-        "price": price,
-        "quantity": quantity
-    }, to=basket_code)
-
-    return jsonify({"message": "Item added to basket"}), 200
 
 
 @app.route('/api/baskets/<basket_code>/items/<int:item_id>', methods=['DELETE'])
@@ -156,27 +143,25 @@ def get_basket_items(basket_code):
     with db_lock:
         with sqlite3.connect(DB_FILE) as conn:
             cursor = conn.cursor()
-            try:
-                cursor.execute('BEGIN IMMEDIATE TRANSACTION')
-                cursor.execute('SELECT id FROM baskets WHERE basket_code = ?', (basket_code,))
-                basket = cursor.fetchone()
+            cursor.execute('SELECT id FROM baskets WHERE basket_code = ?', (basket_code,))
+            basket = cursor.fetchone()
 
-                if not basket:
-                    conn.rollback()
-                    return jsonify({"error": "Basket not found"}), 404
+            if not basket:
+                return jsonify({"error": "Basket not found"}), 404
 
-                basket_id = basket[0]
-                cursor.execute('''
-                    SELECT product, price, quantity FROM basket_items WHERE basket_id = ?
-                ''', (basket_id,))
-                items = cursor.fetchall()
-            except sqlite3.OperationalError:
-                conn.rollback()
-                return jsonify({"error": "Database is busy, try again later"}), 503
+            basket_id = basket[0]
+            cursor.execute('''
+                SELECT id, product, price, quantity, added_by
+                FROM basket_items
+                WHERE basket_id = ?
+            ''', (basket_id,))
+            items = cursor.fetchall()
 
-    return jsonify({"basket_code": basket_code, "items": [
-        {"product": row[0], "price": row[1], "quantity": row[2]} for row in items
-    ]}), 200
+            return jsonify({"items": [
+                {"id": row[0], "product": row[1], "price": row[2], "quantity": row[3], "added_by": row[4]}
+                for row in items
+            ]}), 200
+
 
 
 # WebSocket Handlers
