@@ -3,6 +3,7 @@ import { View, Text, Button, StyleSheet } from 'react-native';
 import { getBasketItems, addItem, deleteItem } from '../api';
 import ProductSearch from './ProductSearch';
 import ItemList from './ItemList';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
 
 export default function BasketScreen({ basketCode, userName, navigateToHome }) {
   const [items, setItems] = useState([]);
@@ -59,14 +60,38 @@ export default function BasketScreen({ basketCode, userName, navigateToHome }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>  </Text>
-      <Text style={styles.title}>Basket Code: {basketCode}</Text>
-      <Text style={styles.label}>Total Cost of Basket: ${totalCost.toFixed(2)}</Text>
-      <Text style={styles.label}>Total cost for individual: ${individualCost.toFixed(2)}</Text>
-      <ProductSearch onAddItem={handleAddItem} />
-      <ItemList items={items} onDeleteItem={handleDeleteItem} />
-      <Button title="Go Back to Home (log out of basket)" onPress={navigateToHome} />
-    </View>
+  <Text style={styles.title}>Basket Details</Text>
+  <Text style={styles.label}>Basket Code: {basketCode}</Text>
+  <Text style={styles.label}>Total Cost of Basket: {totalCost.toFixed(2)}</Text>
+  <Text style={styles.label}>Total Cost for Individual: {individualCost.toFixed(2)}</Text>
+  
+  <ProductSearch onAddItem={handleAddItem} />
+  <ItemList items={items} onDeleteItem={handleDeleteItem} />
+  
+  <Button
+    title="Go Back to Home (log out of basket)"
+    onPress={navigateToHome}
+  />
+
+  <View>
+    <FlatList
+      data={previewItems}
+      keyExtractor={(item) => item.id}
+      renderItem={({ item }) => (
+        <View style={styles.previewItemCard}>
+          <Text style={styles.previewItemName}>{item.name}</Text>
+          <Text style={styles.previewAddedBy}>Added by: {item.addedBy}</Text>
+          <Text style={styles.previewPrice}>£{item.price.toFixed(2)}</Text>
+        </View>
+      )}
+    />
+    <Text style={styles.viewMore} onPress={() => navigation.navigate('OrderSummary')}>
+      View Full Order
+    </Text>
+  </View>
+</View>
+
+  
   );
 }
 
@@ -84,4 +109,31 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginVertical: 5,
   },
+  previewItemCard: {
+    backgroundColor: '#fff',
+    padding: 8,
+    marginVertical: 4,
+    borderRadius: 8,
+  },
+  previewItemName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  previewAddedBy: {
+    fontSize: 12,
+    color: '#666',
+  },
+  previewPrice: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#28a745',
+  },
+  viewMore: {
+    fontSize: 16,
+    color: '#007bff',
+    marginTop: 8,
+    textAlign: 'center',
+    textDecorationLine: 'underline',
+  },
+  
 });

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import HomeScreen from './components/HomeScreen';
 import BasketScreen from './components/BasketScreen';
+import OrderSummaryScreen from './OrderSummaryScreen';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState('Home');
@@ -29,6 +30,11 @@ export default function App() {
       )}
     </View>
   );
+  
+  <Stack.Screen
+  name="OrderSummary"
+  component={OrderSummaryScreen}
+/>;
 }
 
 const styles = StyleSheet.create({

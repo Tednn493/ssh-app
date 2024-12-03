@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { createBasket, joinBasket } from '../api';
+import { useNavigation } from '@react-navigation/native';
 
 export default function HomeScreen({ navigateToBasket }) {
   const [basketCode, setBasketCode] = useState('');
@@ -18,6 +19,17 @@ export default function HomeScreen({ navigateToBasket }) {
     } else {
       alert(result.error);
     }
+  };
+
+  const BasketScreen = () => {
+    const navigation = useNavigation();
+  
+    return (
+      <Button
+        title="View Shared Order"
+        onPress={() => navigation.navigate('OrderSummary')}
+      />
+    );
   };
 
   return (
