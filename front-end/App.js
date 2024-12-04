@@ -30,15 +30,8 @@ export default function App() {
       )}
     </View>
   );
-  
-  <Stack.Screen
-  name="OrderSummary"
-  component={OrderSummaryScreen}
-/>;
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
 });
