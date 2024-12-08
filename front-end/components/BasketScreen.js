@@ -13,15 +13,18 @@ export default function BasketScreen({ basketCode, userName, navigateToHome }) {
 
   const fetchItems = async () => {
     try {
+      console.log('Fetching items for basket:', basketCode);
       const result = await getBasketItems(basketCode);
+      console.log('API Response:', result);
       if (result.error || !result.items) {
-        console.error(result.error || 'Unexpected response structure');
+        console.error('Error fetching items:', result.error || 'No items found');
+        setItems([]); // Fallback to empty array
         return;
       }
       setItems(result.items);
       calculateCosts(result.items);
     } catch (error) {
-      console.error('Error fetching items:', error);
+      console.error('Error in fetchItems:', error);
     }
   };
 
@@ -31,6 +34,7 @@ export default function BasketScreen({ basketCode, userName, navigateToHome }) {
 
   const calculateCosts = (items = []) => {
     if (!Array.isArray(items)) return;
+    console.log('Calculating costs for items:', items);
     const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
     setTotalCost(total);
 
@@ -41,20 +45,30 @@ export default function BasketScreen({ basketCode, userName, navigateToHome }) {
   };
 
   const handleAddItem = async (product, price, quantity) => {
-    const result = await addItem(basketCode, { product, price, quantity, added_by: userName });
-    if (!result.error) {
-      fetchItems();
-    } else {
-      alert(result.error);
+    try {
+      console.log('Adding item:', { product, price, quantity });
+      const result = await addItem(basketCode, { product, price, quantity, added_by: userName });
+      if (!result.error) {
+        fetchItems();
+      } else {
+        console.error('Error adding item:', result.error);
+      }
+    } catch (error) {
+      console.error('Error in handleAddItem:', error);
     }
   };
 
   const handleDeleteItem = async (itemId) => {
-    const result = await deleteItem(basketCode, itemId);
-    if (!result.error) {
-      fetchItems();
-    } else {
-      alert(result.error);
+    try {
+      console.log('Deleting item with ID:', itemId);
+      const result = await deleteItem(basketCode, itemId);
+      if (!result.error) {
+        fetchItems();
+      } else {
+        console.error('Error deleting item:', result.error);
+      }
+    } catch (error) {
+      console.error('Error in handleDeleteItem:', error);
     }
   };
 
@@ -67,19 +81,6 @@ export default function BasketScreen({ basketCode, userName, navigateToHome }) {
       <ProductSearch onAddItem={handleAddItem} />
       <ItemList items={items} onDeleteItem={handleDeleteItem} />
       <Button title="Go Back to Home (log out of basket)" onPress={navigateToHome} />
-      {items.length > 0 && (
-        <FlatList
-          data={items}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <View style={styles.previewItemCard}>
-              <Text style={styles.previewItemName}>{item.product}</Text>
-              <Text style={styles.previewAddedBy}>Added by: {item.added_by || 'Unknown'}</Text>
-              <Text style={styles.previewPrice}>£{item.price.toFixed(2)}</Text>
-            </View>
-          )}
-        />
-      )}
       <Text style={styles.viewMore} onPress={() => navigation.navigate('OrderSummary')}>
         View Full Order
       </Text>
@@ -91,9 +92,5 @@ const styles = StyleSheet.create({
   container: { flex: 1, padding: 20 },
   title: { fontSize: 18, marginBottom: 10 },
   label: { fontSize: 16, fontWeight: 'bold', marginVertical: 5 },
-  previewItemCard: { backgroundColor: '#fff', padding: 8, marginVertical: 4, borderRadius: 8 },
-  previewItemName: { fontSize: 16, fontWeight: 'bold' },
-  previewAddedBy: { fontSize: 12, color: '#666' },
-  previewPrice: { fontSize: 14, fontWeight: 'bold', color: '#28a745' },
   viewMore: { fontSize: 16, color: '#007bff', marginTop: 8, textAlign: 'center', textDecorationLine: 'underline' },
 });
