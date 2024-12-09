@@ -18,7 +18,7 @@ export default function BasketScreen({ basketCode, userName, navigateToHome }) {
       console.log('API Response:', result);
       if (result.error || !result.items) {
         console.error('Error fetching items:', result.error || 'No items found');
-        setItems([]); // Fallback to empty array
+        setItems([]); 
         return;
       }
       setItems(result.items);
