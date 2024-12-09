@@ -18,15 +18,15 @@ export default function BasketScreen({ basketCode, userName, navigateToHome }) {
       console.log('API Response:', result);
       if (result.error || !result.items) {
         console.error('Error fetching items:', result.error || 'No items found');
-        setItems([]); 
         return;
       }
       setItems(result.items);
       calculateCosts(result.items);
     } catch (error) {
-      console.error('Error in fetchItems:', error);
+      console.error('Network error:', error);
     }
   };
+  
 
   useEffect(() => {
     fetchItems();

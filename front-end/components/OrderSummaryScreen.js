@@ -1,17 +1,47 @@
-import React, { useState } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+const OrderSummaryScreen = ({ route }) => {
+  const { basketCode } = route.params || {}; 
+  const [orderItems, setOrderItems] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-const sampleOrder = [
-  { id: '1', name: 'Apples', price: 2.5, addedBy: 'John', category: 'Fruits' },
-  { id: '2', name: 'Milk', price: 1.2, addedBy: 'Jane', category: 'Dairy' },
-  { id: '3', name: 'Bread', price: 1.8, addedBy: 'Alice', category: 'Bakery' },
-];
+  const fetchOrderSummary = async () => {
+    try {
+      console.log('Fetching order summary for basket:', basketCode);
+      const result = await getBasketItems(basketCode); 
+      if (result.error) {
+        console.error('Error fetching order summary:', result.error);
+        Alert.alert('Error', 'Failed to fetch order summary. Please try again later.');
+        return;
+      }
+      setOrderItems(result.items || []);
+    } catch (error) {
+      console.error('Network error while fetching order summary:', error);
+      Alert.alert('Network Error', 'Unable to load order summary. Please check your connection.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-const OrderSummaryScreen = () => {
-  const [orderItems, setOrderItems] = useState(sampleOrder);
+  useEffect(() => {
+    if (basketCode) {
+      fetchOrderSummary();
+    } else {
+      Alert.alert('Error', 'No basket code provided.');
+      setLoading(false);
+    }
+  }, [basketCode]);
 
   const calculateTotal = () =>
-    orderItems.reduce((total, item) => total + item.price, 0);
+    orderItems.reduce((total, item) => total + item.price * item.quantity, 0);
+
+  if (loading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#007bff" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -26,6 +56,9 @@ const OrderSummaryScreen = () => {
             <Text style={styles.price}>£{item.price.toFixed(2)}</Text>
           </View>
         )}
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>No items in this basket yet.</Text>
+        }
       />
       <View style={styles.summary}>
         <Text style={styles.totalText}>Total Cost: £{calculateTotal().toFixed(2)}</Text>
@@ -77,7 +110,17 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-
+  emptyText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginVertical: 20,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default OrderSummaryScreen;
