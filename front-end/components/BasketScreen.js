@@ -8,23 +8,24 @@ export default function BasketScreen({ basketCode, userName, navigateToHome }) {
   const [items, setItems] = useState([]);
   const [totalCost, setTotalCost] = useState(0);
   const [individualCost, setIndividualCost] = useState(0);
+  const [lastUpdatedTimestamp, setLastUpdatedTimestamp] = useState(0);
 
   // Fetch items from the server
   const fetchItems = async () => {
     const result = await getBasketItems(basketCode);
     if (!result.error) {
       setItems(result.items || []);
-      calculateCosts(result.items || []); 
+      calculateCosts(result.items || []);
+      setLastUpdatedTimestamp(Date.now());
     } else {
       console.error(result.error);
     }
   };
 
   // Call fetchItems every 10 seconds (10000 ms)
-  setInterval(fetchItems, 10000);
-
   useEffect(() => {
-    fetchItems();
+    const interval = setInterval(fetchItems, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   // Calculate total cost and individual cost
@@ -60,14 +61,20 @@ export default function BasketScreen({ basketCode, userName, navigateToHome }) {
     }
   };
 
+  // Fetch items when the component mounts
+  useEffect(() => {
+    fetchItems();
+  }, []);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>  </Text>
       <Text style={styles.title}>Basket Code: {basketCode}</Text>
       <Text style={styles.label}>Total Cost of Basket: ${totalCost.toFixed(2)}</Text>
       <Text style={styles.label}>Total cost for individual: ${individualCost.toFixed(2)}</Text>
+      <Text style={styles.label}>Last updated: {new Date(lastUpdatedTimestamp).toLocaleString()}</Text>
       <ProductSearch onAddItem={handleAddItem} />
-      <ItemList items={items} onDeleteItem={handleDeleteItem} name={userName}/>
+      <ItemList items={items} onDeleteItem={handleDeleteItem} name={userName} />
       <Button title="Go Back to Home (log out of basket)" onPress={navigateToHome} />
     </View>
   );
