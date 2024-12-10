@@ -1,24 +1,23 @@
 import React, { useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { View, StyleSheet } from 'react-native';
 import HomeScreen from './components/HomeScreen';
 import BasketScreen from './components/BasketScreen';
-import OrderSummaryScreen from './components/OrderSummaryScreen';
-
-const Stack = createStackNavigator();
 
 export default function App() {
+  const [currentScreen, setCurrentScreen] = useState('Home');
   const [basketCode, setBasketCode] = useState(null);
   const [userName, setUserName] = useState(null);
 
   const navigateToBasket = (basketCode, userName) => {
     setBasketCode(basketCode);
     setUserName(userName);
+    setCurrentScreen('Basket');
   };
 
   const navigateToHome = () => {
     setBasketCode(null);
     setUserName(null);
+    setCurrentScreen('Home');
   };
 
   return (

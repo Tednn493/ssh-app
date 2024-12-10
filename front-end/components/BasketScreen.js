@@ -1,4 +1,4 @@
-import { API_URL } from './api_url';
+import { API_URL } from '../api_url';
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { getBasketItems, addItem, deleteItem } from '../api';

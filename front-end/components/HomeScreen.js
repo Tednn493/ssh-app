@@ -1,3 +1,4 @@
+import { API_URL } from '../api_url';
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { createBasket, joinBasket } from '../api';
@@ -8,11 +9,7 @@ export default function HomeScreen({ navigateToBasket }) {
 
   const handleCreateBasket = async () => {
     const result = await createBasket();
-    if (!result.error) {
-      navigateToBasket(result.basket_code, name);
-    } else {
-      alert(result.error);
-    }
+    navigateToBasket(result.basket_code, name);
   };
 
   const handleJoinBasket = async () => {
