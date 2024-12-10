@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { createBasket, joinBasket } from '../api';
 
 export default function HomeScreen({ navigateToBasket }) {
@@ -26,23 +26,68 @@ export default function HomeScreen({ navigateToBasket }) {
       <TextInput
         style={styles.input}
         placeholder="Enter your name"
+        placeholderTextColor="#aaa"
         value={name}
         onChangeText={setName}
       />
-      <Button title="Create Basket" onPress={handleCreateBasket} />
+      <TouchableOpacity style={styles.button} onPress={handleCreateBasket}>
+        <Text style={styles.buttonText}>Create Basket</Text>
+      </TouchableOpacity>
       <TextInput
         style={styles.input}
         placeholder="Enter basket code"
+        placeholderTextColor="#aaa"
         value={basketCode}
         onChangeText={setBasketCode}
       />
-      <Button title="Join Basket" onPress={handleJoinBasket} />
+      <TouchableOpacity style={styles.button} onPress={handleJoinBasket}>
+        <Text style={styles.buttonText}>Join Basket</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  title: { fontSize: 20, marginBottom: 20 },
-  input: { height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 20, paddingHorizontal: 10, width: '80%' },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    backgroundColor: '#f5f5f5',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 30,
+    color: '#333',
+  },
+  input: {
+    height: 50,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 20,
+    paddingHorizontal: 15,
+    width: '100%',
+    backgroundColor: '#fff',
+    fontSize: 16,
+  },
+  button: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+    width: '100%',
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
+  },
 });

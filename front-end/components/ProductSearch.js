@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { 
-  View, 
-  TextInput, 
-  StyleSheet, 
-  Button, 
-  TouchableWithoutFeedback, 
+import {
+  View,
+  TextInput,
+  StyleSheet,
+  TouchableWithoutFeedback,
   Keyboard,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  Text,
+  TouchableOpacity,
 } from 'react-native';
 import { ExpandablePanel, ProductCard } from './StyledComponents';
 
@@ -15,48 +16,48 @@ const products = [
   {
     product: 'Apple',
     price: 0.5,
-    imageSource: require('../assets/apple.png')
+    imageSource: require('../assets/apple.png'),
   },
   {
     product: 'Banana',
     price: 0.3,
-    imageSource: require('../assets/banana.png')
+    imageSource: require('../assets/banana.png'),
   },
   {
     product: 'Bread',
     price: 1.0,
-    imageSource: require('../assets/bread.png')
+    imageSource: require('../assets/bread.png'),
   },
   {
     product: 'Milk',
     price: 1.5,
-    imageSource: require('../assets/milk.png')
+    imageSource: require('../assets/milk.png'),
   },
   {
     product: 'Eggs',
     price: 2.5,
-    imageSource: require('../assets/eggs.png')
+    imageSource: require('../assets/eggs.png'),
   },
   {
     product: 'Beef',
     price: 10.0,
-    imageSource: require('../assets/Beef.png')
+    imageSource: require('../assets/Beef.png'),
   },
   {
-    product: 'chicken',
+    product: 'Chicken',
     price: 6.99,
-    imageSource: require('../assets/chicken.png')
+    imageSource: require('../assets/chicken.png'),
   },
   {
     product: 'Oranges',
     price: 2.0,
-    imageSource: require('../assets/oranges.png')
+    imageSource: require('../assets/oranges.png'),
   },
   {
     product: 'Tomatoes',
     price: 1.75,
-    imageSource: require('../assets/tomato.png')
-  }
+    imageSource: require('../assets/tomato.png'),
+  },
 ];
 
 export default function ProductSearch({ onAddItem }) {
@@ -67,7 +68,6 @@ export default function ProductSearch({ onAddItem }) {
   const handleProductSelect = (product) => {
     setSelectedProduct(product);
     setForceCollapse(true);
-    // Reset forceCollapse after a brief delay
     setTimeout(() => setForceCollapse(false), 100);
   };
 
@@ -83,7 +83,7 @@ export default function ProductSearch({ onAddItem }) {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <KeyboardAvoidingView 
+      <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.container}
       >
@@ -117,10 +117,9 @@ export default function ProductSearch({ onAddItem }) {
             returnKeyType="done"
             onSubmitEditing={Keyboard.dismiss}
           />
-          <Button 
-            title="Add to Basket"
-            onPress={handleAdd}
-          />
+          <TouchableOpacity style={styles.addButton} onPress={handleAdd}>
+            <Text style={styles.addButtonText}>Add to Basket</Text>
+          </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
@@ -157,6 +156,23 @@ const styles = StyleSheet.create({
   },
   selectedInfo: {
     marginBottom: 8,
-  }
+  },
+  addButton: {
+    backgroundColor: '#4CAF50',
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 4,
+  },
+  addButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
+
 
