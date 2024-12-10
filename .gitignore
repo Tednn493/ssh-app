@@ -40,3 +40,5 @@ venv/
 #Ignoring database files
 back-end/*.db 
 back-end/__pycache__
+#Added api_url to the db as this would differ depending on who runs the server
+front-end/api_url.js
