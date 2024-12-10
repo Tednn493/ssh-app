@@ -20,6 +20,9 @@ export default function BasketScreen({ basketCode, userName, navigateToHome }) {
     }
   };
 
+  // Call fetchItems every 10 seconds (10000 ms)
+  setInterval(fetchItems, 10000);
+
   useEffect(() => {
     fetchItems();
   }, []);
@@ -64,7 +67,7 @@ export default function BasketScreen({ basketCode, userName, navigateToHome }) {
       <Text style={styles.label}>Total Cost of Basket: ${totalCost.toFixed(2)}</Text>
       <Text style={styles.label}>Total cost for individual: ${individualCost.toFixed(2)}</Text>
       <ProductSearch onAddItem={handleAddItem} />
-      <ItemList items={items} onDeleteItem={handleDeleteItem} />
+      <ItemList items={items} onDeleteItem={handleDeleteItem} name={userName}/>
       <Button title="Go Back to Home (log out of basket)" onPress={navigateToHome} />
     </View>
   );
