@@ -1,5 +1,5 @@
-const API_URL = 'http://192.168.1.114:8080/api';
-
+const API_URL = "http://192.168.1.15:8080/api";
+ //Please change this to the intended ip address of the server, and add /api on the end.
 
 // Create a new basket
 export const createBasket = async () => {

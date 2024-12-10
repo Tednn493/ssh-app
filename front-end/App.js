@@ -22,31 +22,19 @@ export default function App() {
   };
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home">
-          {(props) => (
-            <HomeScreen
-              {...props}
-              navigateToBasket={navigateToBasket}
-            />
-          )}
-        </Stack.Screen>
-        <Stack.Screen name="Basket">
-          {(props) => (
-            <BasketScreen
-              {...props}
-              basketCode={basketCode}
-              userName={userName}
-              navigateToHome={navigateToHome}
-            />
-          )}
-        </Stack.Screen>
-        <Stack.Screen
-          name="OrderSummary"
-          component={OrderSummaryScreen}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <View style={styles.container}>
+      {currentScreen === 'Home' ? (
+        <HomeScreen navigateToBasket={navigateToBasket} />
+      ) : (
+        <BasketScreen basketCode={basketCode} userName={userName} navigateToHome={navigateToHome} />
+      )}
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff'
+  },
+});

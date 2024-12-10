@@ -1,20 +1,22 @@
 import React from 'react';
 import { View, Text, FlatList, Button, StyleSheet } from 'react-native';
 
-export default function ItemList({ items, onDeleteItem }) {
+export default function ItemList({ items, onDeleteItem, name}) {
   const renderItem = ({ item }) => (
     <View style={styles.itemContainer}>
       <View>
         <Text>{item.product} - ${item.price} x {item.quantity}</Text>
         <Text style={styles.added_by}>Added by: {item.added_by || 'Unknown'}</Text>
       </View>
-      <Button
-        title="Remove"
-        onPress={() => {
-          console.log("Item passed to delete:", item);
-          onDeleteItem(item.id);
-        }}
-      />
+      {item.added_by ===  name&& (
+        <Button
+          title="Remove"
+          onPress={() => {
+            console.log("Item passed to delete:", item);
+            onDeleteItem(item.id);
+          }}
+        />
+      )}
     </View>
   );
 
