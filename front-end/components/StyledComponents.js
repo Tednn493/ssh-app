@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Pressable, Animated, StyleSheet, Image, ScrollView, Dimensions } from 'react-native';
+import { View, Text, Pressable, Animated, StyleSheet, Image, ScrollView, Dimensions, Easing } from 'react-native';
 
 const screenWidth = Dimensions.get('window').width;
 const IMAGE_SIZE = 80;
@@ -19,8 +19,9 @@ export const ExpandablePanel = ({ title, children, forceCollapse }) => {
       setExpanded(false);
       Animated.timing(animation, {
         toValue: 0,
-        duration: 300,
+        duration: 200,
         useNativeDriver: false,
+        easing: Easing.ease
       }).start();
     }
   }, [forceCollapse]);
@@ -31,16 +32,16 @@ export const ExpandablePanel = ({ title, children, forceCollapse }) => {
       toValue: expanded ? 0 : 1,
       duration: 300,
       useNativeDriver: false,
+      easing: Easing.ease
     }).start();
   };
 
-  
+  const maxHeight = Dimensions.get('window').height * 0.4;
 
-  // Increased height to accommodate more products
-  const contentHeight = animation.interpolate({
+  const animatedHeight = animation.interpolate({
     inputRange: [0, 1],
-    // Calculate height based on screen height to ensure it fits well
-    outputRange: [0, Dimensions.get('window').height * 0.6], // 60% of screen height
+    outputRange: [0, maxHeight],
+    extrapolate: 'clamp'
   });
 
   return (
@@ -49,8 +50,16 @@ export const ExpandablePanel = ({ title, children, forceCollapse }) => {
         <Text style={styles.headerText}>{title}</Text>
         <Text style={styles.expandIcon}>{expanded ? '▼' : '▶'}</Text>
       </Pressable>
-      <Animated.View style={[styles.content, { maxHeight: contentHeight }]}>
+      <Animated.View 
+        style={[
+          styles.content,
+          {
+            maxHeight: animatedHeight,
+          }
+        ]}
+      >
         <ScrollView 
+          style={{ maxHeight }}
           showsVerticalScrollIndicator={true}
           bounces={false}
         >
@@ -98,6 +107,7 @@ const styles = StyleSheet.create({
     padding: 0,
     overflow: 'hidden',
     maxWidth: screenWidth - 32,
+    backgroundColor: '#fff',
   },
   header: {
     flexDirection: 'row',

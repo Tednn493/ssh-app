@@ -67,8 +67,9 @@ export default function ProductSearch({ onAddItem }) {
   const handleProductSelect = (product) => {
     setSelectedProduct(product);
     setForceCollapse(true);
-    // Reset forceCollapse after a brief delay
-    setTimeout(() => setForceCollapse(false), 100);
+    setTimeout(() => {
+      setForceCollapse(false);
+    }, 300); // Match the animation duration
   };
 
   const handleAdd = () => {
@@ -159,4 +160,3 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   }
 });
-
